@@ -1,31 +1,40 @@
 package interactionbeats.interview.algorithms.binaryheap;
 
-public class Heap {
 
-	int heap_store[];
+import java.util.ArrayList;
+
+public class Heap {
+	/**
+	 * 
+	 * Heap is a 
+	 * 	 - Complete Binary tree
+	 *   - Two types (i) Max Heap - Every node is greater than its left and right child
+	 *               (ii)Min Heap - Every node is smaller than its left and right child
+	 *   - Heap is loosely sorted, the root is the smallest element in case of minHeap or max element in case of maxHeap
+	 *   - Heap in arrays allow us to store children without pointer, hence avoiding the extra memory as in a binary tree
+	 * 	 Disadvantages-
+	 *    Since array based implementation doesn't use pointer, we cannot move nodes around instead have to move the content around
+	 *    It's no good for searching as we cannot do a log n search as in binary search tree, but we can do a linear search
+	 *    
+	 *    Usage- 
+	 *      -Given a set of values if you need to find the first 'x' no of values that match a filter criteria
+	 *      [will be updated]
+	 */
+	
+	
+	ArrayList<Coordinates> heap_store;
+	int total_size;
 	int current_size;
 
 	
 	public Heap(int size){
-		heap_store = new int[size];
+	
+		heap_store = new ArrayList<Coordinates>(size);
 		current_size=0;
+		total_size=size;
+		
 	}
-/**
- * 
- * Heap is a 
- * 	 - Complete Binary tree
- *   - Two types (i) Max Heap - Every node is greater than its left and right child
- *               (ii)Min Heap - Every node is smaller than its left and right child
- *   - Heap is loosely sorted, the root is the smallest element in case of minHeap or max element in case of maxHeap
- *   - Heap in arrays allow us to store children without pointer, hence avoiding the extra memory as in a binary tree
- * 	 Disadvantages-
- *    Since array based implementation doesn't use pointer, we cannot move nodes around instead have to move the content around
- *    It's no good for searching as we cannot do a log n search as in binary search tree, but we can do a linear search
- *    
- *    Usage- 
- *      -Given a set of values if you need to find the first 'x' no of values that match a filter criteria
- *      [will be updated]
- */
+
 	
 	//getLeftChildIndex
 	int leftChildIndex(int index){
@@ -46,13 +55,14 @@ public class Heap {
 	
 	//Insert into Heap
 	
-	void Insert(int data) throws HeapException{
+	void Insert(int x, int y) throws HeapException{
 		
-		if(current_size==heap_store.length){
+		if(current_size==total_size){
 			throw new HeapException("Heap is Full");
 		}
 		int insert_index=current_size;
-		heap_store[insert_index]=data;
+		Coordinates insert_data=new Coordinates(x,y);
+		heap_store.add(insert_index, insert_data);
 		current_size++;
 		TrickleUp(insert_index);
 		
@@ -66,10 +76,11 @@ public class Heap {
 			return ;
 		else{
 			int parent=parentIndex(index);
-			if(heap_store[parent]<heap_store[index]){
-				int temp=heap_store[parent];
-				heap_store[parent]=heap_store[index];
-				heap_store[index]=temp;
+			if(heap_store.get(parent).compareTo(heap_store.get(index))<0){
+				Coordinates temp=heap_store.get(parent);
+				
+				heap_store.add(parent,heap_store.get(index));
+				heap_store.add(index,temp);
 			}
 			TrickleUp(parent);
 		}
@@ -77,11 +88,11 @@ public class Heap {
 		
 	}
 	
-	int getRootElement(){
+	int getRootElementDistance(){
 		if(current_size==0)
 			return -1;
 		else
-			return heap_store[0];
+			return heap_store.get(0).getDistance();
 		
 	}
 	
@@ -95,7 +106,7 @@ public class Heap {
 		int traverse_index=-1;
 		
 		if(left<current_size&&right<current_size){
-			if(heap_store[left]<heap_store[right]){	
+			if(heap_store.get(left).compareTo(heap_store.get(right))<1){	
 				traverse_index=right;
 			}else{
 				
@@ -113,10 +124,10 @@ public class Heap {
 		
 		
 				
-		if(traverse_index>=0&&heap_store[index]<heap_store[traverse_index]){
-			int temp=heap_store[index];
-			heap_store[index]=heap_store[traverse_index];
-			heap_store[traverse_index]=temp;
+		if(traverse_index>=0&& (heap_store.get(index).compareTo(heap_store.get(traverse_index))<0)){
+			Coordinates temp=heap_store.get(index);
+			heap_store.add(index,heap_store.get(traverse_index));
+			heap_store.add(traverse_index,temp);
 			TrickleDown(traverse_index);
 		}
 		
@@ -124,17 +135,17 @@ public class Heap {
 	
 	//DeleteMax from Heap
 	
-	int DeleteMax() throws HeapException{
+	void DeleteMax() throws HeapException{
 		if(current_size==0)
 			throw new HeapException("Heap is empty");
 		else{
-			int deletedElement=heap_store[0];
-			heap_store[0]=heap_store[current_size-1];
-			heap_store[current_size-1]=0;
+			Coordinates deletedElement=heap_store.get(0);
+			heap_store.add(0,heap_store.get(current_size-1));
+			heap_store.remove(current_size-1);
 			current_size--;
 			if(current_size>0)
 			TrickleDown(0);
-			return deletedElement;
+			//return deletedElement;
 		}
 		
 		
@@ -145,7 +156,7 @@ public class Heap {
 		
 		Heap new_Heap= new Heap(heapData.length);
 		for(int data:heapData){
-			new_Heap.Insert(data);
+			//new_Heap.Insert(data);
 		}
 		return new_Heap;
 		
@@ -156,10 +167,12 @@ public class Heap {
 			return;
 		else{
 			for(int i=0;i<current_size;i++)
-				System.out.println(heap_store[i]);
+				System.out.println("X:"+heap_store.get(i).getX()+"Y:"+heap_store.get(i).getY()+"distance :"+heap_store.get(i).getDistance());
 		}
 		
 	}
+	
+	
 	
 	
 }

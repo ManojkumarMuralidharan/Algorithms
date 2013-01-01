@@ -33,11 +33,12 @@ public class HeapTest {
 					int y=(int)Double.parseDouble(coordinates.split(":")[1]);
 					int distance = x*x+y*y;
 					if(new_heap.current_size<Integer.parseInt(args[0])){
-						new_heap.Insert(distance);
+						//Coordinates new_coord=new Coordinates(x, y);
+						new_heap.Insert(x,y);
 					}else{
-						if(distance<new_heap.getRootElement()){
+						if(distance<new_heap.getRootElementDistance()){
 							new_heap.DeleteMax();
-							new_heap.Insert(distance);
+							new_heap.Insert(x,y);
 						}			
 					}
 
